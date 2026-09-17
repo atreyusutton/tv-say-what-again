@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage TV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            padding-top: 10vh;
+        }
+
+        .tv-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tv-wrapper {
+            position: relative;
+            width: 60vw;
+            max-width: 900px;
+        }
+
+        /* White alignment box behind TV - removed, video now matches these dimensions */
+        .tv-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 15%;
+            width: 55%;
+            height: 45%;
+            background: transparent;
+            z-index: 0;
+        }
+
+        .tv-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .screen-wrapper {
+            position: absolute;
+            /* Positioning the video within the TV screen area */
+            /* These values match the white box dimensions */
+            top: 40%;
+            left: 15%;
+            width: 55%;
+            height: 45%;
+            background: #000;
+            z-index: 1;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Add tracking lines effect */
+        .screen .video-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                0deg,
+                transparent 0%,
+                transparent 48%,
+                rgba(255, 255, 255, 0.1) 49%,
+                rgba(255, 255, 255, 0.1) 51%,
+                transparent 52%,
+                transparent 100%
+            );
+            z-index: 5;
+            pointer-events: none;
+            animation: trackingLines 8s linear infinite;
+        }
+
+        @keyframes trackingLines {
+            0% { transform: translateY(-100%); opacity: 0; }
+            10% { opacity: 0.3; }
+            50% { opacity: 0.4; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(200%); opacity: 0; }
+        }
+
+        /* Scanlines effect - more pronounced */
+        .screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.3),
+                rgba(0, 0, 0, 0.3) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.8;
+        }
+
+        /* Vignette effect - stronger */
+        .screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 5%;
+        }
+
+        /* Static noise overlay - much more pronounced */
+        .static-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 1px,
+                    rgba(255, 255, 255, 0.12) 2px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 1px,
+                    rgba(255, 255, 255, 0.12) 2px
+                );
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 4;
+            animation: staticNoise 0.1s infinite, staticGlitch 3s infinite;
+        }
+
+        @keyframes staticNoise {
+            0% { transform: translate(0, 0); opacity: 0.8; }
+            10% { transform: translate(-3px, 3px); opacity: 0.7; }
+            20% { transform: translate(3px, -3px); opacity: 0.9; }
+            30% { transform: translate(-2px, -3px); opacity: 0.8; }
+            40% { transform: translate(3px, 2px); opacity: 0.7; }
+            50% { transform: translate(-3px, 1px); opacity: 0.85; }
+            60% { transform: translate(2px, -2px); opacity: 0.8; }
+            70% { transform: translate(-2px, -3px); opacity: 0.7; }
+            80% { transform: translate(3px, 3px); opacity: 0.9; }
+            90% { transform: translate(-3px, 2px); opacity: 0.75; }
+            100% { transform: translate(0, 0); opacity: 0.8; }
+        }
+
+        @keyframes staticGlitch {
+            0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90%, 100% {
+                background-size: 100% 100%;
+            }
+            5% {
+                background-size: 102% 102%;
+            }
+            15% {
+                background-size: 98% 98%;
+            }
+            35% {
+                background-size: 103% 103%;
+            }
+            55% {
+                background-size: 97% 97%;
+            }
+            75% {
+                background-size: 101% 101%;
+            }
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            animation: videoShake 0.3s infinite;
+        }
+
+        @keyframes videoShake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-1px, 1px) rotate(-0.1deg); }
+            20% { transform: translate(1px, -1px) rotate(0.1deg); }
+            30% { transform: translate(-1px, -1px) rotate(-0.05deg); }
+            40% { transform: translate(1px, 1px) rotate(0.05deg); }
+            50% { transform: translate(-1px, 0px) rotate(-0.08deg); }
+            60% { transform: translate(1px, 0px) rotate(0.08deg); }
+            70% { transform: translate(-1px, -1px) rotate(-0.03deg); }
+            80% { transform: translate(1px, 1px) rotate(0.03deg); }
+            90% { transform: translate(-1px, 1px) rotate(-0.06deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.7) contrast(1.1) brightness(0.95);
+            animation: colorShift 5s infinite;
+        }
+
+        @keyframes colorShift {
+            0% { filter: saturate(0.7) contrast(1.1) brightness(0.95) hue-rotate(0deg); }
+            25% { filter: saturate(0.65) contrast(1.15) brightness(0.93) hue-rotate(2deg); }
+            50% { filter: saturate(0.7) contrast(1.1) brightness(0.95) hue-rotate(0deg); }
+            75% { filter: saturate(0.68) contrast(1.12) brightness(0.92) hue-rotate(-2deg); }
+            100% { filter: saturate(0.7) contrast(1.1) brightness(0.95) hue-rotate(0deg); }
+        }
+
+        /* Power button */
+        .power-button {
+            position: absolute;
+            /* Position over the top circular knob on the TV */
+            top: 55%;
+            right: 17%;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: none;
+            border: none;
+            z-index: 20;
+            opacity: 1;
+        }
+
+        .power-button:hover {
+            transform: scale(1.15);
+        }
+
+        .power-button:active {
+            transform: scale(0.95);
+        }
+
+        .power-button.on {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        /* Dim the button when off */
+        .power-button:not(.on) {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        /* TV Power-off animation */
+        .screen.turning-off .video-container {
+            animation: powerOff 0.8s cubic-bezier(0.4, 0.0, 1, 1) forwards;
+        }
+
+        .screen.turning-off video {
+            animation: brightness-flash 0.8s cubic-bezier(0.4, 0.0, 1, 1) forwards;
+        }
+
+        /* TV Power-on animation */
+        .screen.turning-on .video-container {
+            animation: powerOn 0.6s cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
+        }
+
+        .screen.turning-on video {
+            animation: brightness-bloom 0.6s cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
+        }
+
+        @keyframes powerOff {
+            0% {
+                transform: scaleY(1) scaleX(1);
+                opacity: 1;
+            }
+            60% {
+                transform: scaleY(0.02) scaleX(1);
+                opacity: 1;
+            }
+            80% {
+                transform: scaleY(0.02) scaleX(0.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scaleY(0) scaleX(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes brightness-flash {
+            0% {
+                filter: brightness(1) saturate(0.7) contrast(1.1);
+            }
+            15% {
+                filter: brightness(2.5) saturate(0.7) contrast(1.3);
+            }
+            30% {
+                filter: brightness(3) saturate(0.7) contrast(1.5);
+            }
+            100% {
+                filter: brightness(0) saturate(0.7) contrast(1.1);
+            }
+        }
+
+        @keyframes powerOn {
+            0% {
+                transform: scaleY(0) scaleX(0);
+                opacity: 0;
+            }
+            20% {
+                transform: scaleY(0.02) scaleX(0.1);
+                opacity: 0.8;
+            }
+            40% {
+                transform: scaleY(0.02) scaleX(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scaleY(1) scaleX(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes brightness-bloom {
+            0% {
+                filter: brightness(0) saturate(0.7) contrast(1.1);
+            }
+            30% {
+                filter: brightness(3) saturate(0.7) contrast(1.5);
+            }
+            50% {
+                filter: brightness(2.5) saturate(0.7) contrast(1.3);
+            }
+            100% {
+                filter: brightness(1) saturate(0.7) contrast(1.1);
+            }
+        }
+
+        .screen.off .video-container {
+            display: none;
+        }
+
+        .screen.off .static-overlay {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="tv-container">
+        <div class="tv-wrapper">
+            <div class="screen-wrapper">
+                <div class="screen on" id="screen">
+                    <div class="static-overlay"></div>
+                    <div class="video-container">
+                        <video id="video" loop>
+                            <source src="say-what-again.mov" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+            <img src="tv.png" alt="TV Frame" class="tv-image">
+            <button class="power-button on" id="powerButton"></button>
+        </div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const video = document.getElementById('video');
+        const powerButton = document.getElementById('powerButton');
+        let isOn = true;
+
+        // ====== VIDEO START TIME SETTING ======
+        // Set where the video starts (in seconds)
+        const VIDEO_START_TIME = 0; // Change this number to set start time (e.g., 5.5 for 5.5 seconds)
+        // =====================================
+
+        // Set initial start time when video metadata is loaded
+        video.addEventListener('loadedmetadata', () => {
+            video.currentTime = VIDEO_START_TIME;
+        });
+
+        // Start playing video on load
+        video.play().catch(e => {
+            console.log('Autoplay prevented, click power button to start');
+        });
+
+        powerButton.addEventListener('click', () => {
+            if (isOn) {
+                // Turn off
+                screen.classList.remove('on', 'turning-on');
+                screen.classList.add('turning-off');
+                powerButton.classList.remove('on');
+                
+                setTimeout(() => {
+                    screen.classList.remove('turning-off');
+                    screen.classList.add('off');
+                    video.pause();
+                }, 800);
+                
+                isOn = false;
+            } else {
+                // Turn on
+                screen.classList.remove('off', 'turning-off');
+                screen.classList.add('turning-on');
+                powerButton.classList.add('on');
+                
+                video.play().catch(e => console.log('Play error:', e));
+                
+                setTimeout(() => {
+                    screen.classList.remove('turning-on');
+                    screen.classList.add('on');
+                }, 600);
+                
+                isOn = true;
+            }
+        });
+    </script>
+</body>
+</html>
+

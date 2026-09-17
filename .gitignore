@@ -1,0 +1,4 @@
+.DS_Store
+
+# large video, kept local
+*.mov
